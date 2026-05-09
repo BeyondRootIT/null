@@ -1,0 +1,13 @@
+target-version = "py312"
+line-length = 100
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "A", "C4", "RUF", "ASYNC", "SIM"]
+ignore = ["S101", "S104"]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S", "B011"]
+"src/cti/cli/**/*.py" = ["B008"]
+
+[format]
+quote-style = "double"

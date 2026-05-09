@@ -1,0 +1,53 @@
+# Real, working v0 verification feeds.
+# Two abuse.ch lists used for end-to-end smoke testing.
+sources:
+  - id: abuse_ch_urlhaus
+    name: "abuse.ch URLhaus (recent URLs)"
+    plugin: http_csv
+    parser: csv
+    enrichers: [defang, allowlist]
+    publishers: [postgres]
+    schedule: "*/15 * * * *"
+    rate_limit_rps: 1.0
+    timeout_seconds: 90
+    tlp: GREEN
+    confidence_default: 80
+    params:
+      url: "https://urlhaus.abuse.ch/downloads/csv_recent/"
+      decompress: null
+    parser_params:
+      delimiter: ","
+      has_header: false
+      skip_comment_prefix: "#"
+      field_names: [id, dateadded, url, url_status, threat, tags, urlhaus_link, reporter]
+    normalize:
+      indicator_type: url
+      value_field: url
+      tags_field: tags
+      static_tags: ["abuse.ch", "urlhaus"]
+      tlp_default: GREEN
+      confidence_default: 80
+    enricher_params:
+      allowlist:
+        drop_private_ips: true
+
+  - id: abuse_ch_feodo_tracker
+    name: "abuse.ch Feodo Tracker (botnet C2 IPs)"
+    plugin: http_json
+    parser: json
+    enrichers: [allowlist]
+    publishers: [postgres]
+    schedule: "*/30 * * * *"
+    rate_limit_rps: 1.0
+    timeout_seconds: 60
+    tlp: GREEN
+    confidence_default: 90
+    params:
+      url: "https://feodotracker.abuse.ch/downloads/ipblocklist.json"
+    parser_params: {}
+    normalize:
+      indicator_type: ipv4
+      value_field: ip_address
+      static_tags: ["abuse.ch", "feodo", "c2"]
+      tlp_default: GREEN
+      confidence_default: 90

@@ -1,0 +1,17 @@
+# Framework-wide defaults. Override per-source in sources.yaml.
+defaults:
+  retry:
+    max_attempts: 5
+    initial_seconds: 1.0
+    max_seconds: 60.0
+    jitter_seconds: 1.0
+  circuit:
+    failure_threshold: 5
+    recovery_seconds: 300.0
+  rate_limit_rps: 5.0
+  max_parallelism: 1
+  timeout_seconds: 60
+  jitter_seconds: 60
+  tlp: AMBER
+  severity_default: info
+  confidence_default: 50
